@@ -1,0 +1,88 @@
+version: "3.7"
+networks:
+  default:
+    name: broadcast
+services:
+  broadcast:
+    build:
+      context: ./broadcast
+      dockerfile: Dockerfile
+    container_name: broadcast
+    # tty: true
+    ports:
+      - 40772:40772
+      - 9229:9229
+    environment:
+      TZ: Asia/Tokyo
+      # LOG_LEVEL: "3"
+      # DEBUG: "true"
+    cap_add:
+      - SYS_ADMIN
+      - SYS_NICE
+    devices:
+      # - /dev/dvb:/dev/dvb
+      - /dev/bus:/dev/bus
+      - /dev/pt3video0:/dev/pt3video0
+      - /dev/pt3video1:/dev/pt3video1
+      - /dev/pt3video2:/dev/pt3video2
+      - /dev/pt3video3:/dev/pt3video3
+    volumes:
+      - ./mnt/mirakurun/run/:/var/run/
+      - ./mnt/mirakurun/opt/:/opt/
+      - ./mnt/mirakurun/config:/app-config/
+      - ./mnt/mirakurun/data/:/app-data/
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "1"
+        max-size: 10m
+
+  mysql:
+    image: mariadb:10.4
+    volumes:
+      - ./mnt/mysql:/var/lib/mysql
+    environment:
+      MYSQL_USER: epgstation
+      MYSQL_PASSWORD: epgstation
+      MYSQL_ROOT_PASSWORD: epgstation
+      MYSQL_DATABASE: epgstation
+      TZ: "Asia/Tokyo"
+    command: --character-set-server=utf8 --collation-server=utf8_unicode_ci --performance-schema=false --expire_logs_days=1
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  epgstation:
+    build:
+      context: "./epgstation/epgstation"
+      dockerfile: "debian.Dockerfile"
+    volumes:
+      - ./mnt/epgstation/config:/app/config
+      - ./mnt/epgstation/data:/app/data
+      - ./mnt/epgstation/thumbnail:/app/thumbnail
+      - ./mnt/epgstation/logs:/app/logs
+      - ./mnt/recorded:/app/recorded
+    environment:
+      TZ: "Asia/Tokyo"
+    depends_on:
+      - broadcast
+      - mysql
+    ports:
+      - "8888:8888"
+      - "8889:8889"
+    restart: always
+
+  # nginx:
+  #   build:
+  #     context: "./nginx"
+  #     dockerfile: "Dockerfile"
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/public:/usr/share/nginx/html
+  #   depends_on:
+  #     - broadcast
+  #     - epgstation

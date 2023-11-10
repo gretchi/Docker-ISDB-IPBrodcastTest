@@ -1,0 +1,15 @@
+[submodule "driver/pt3"]
+	path = driver/pt3
+	url = https://github.com/m-tsudo/pt3.git
+[submodule "broadcast/libarib25"]
+	path = broadcast/libarib25
+	url = https://github.com/stz2012/libarib25.git
+[submodule "broadcast/recpt1"]
+	path = broadcast/recpt1
+	url = https://github.com/stz2012/recpt1.git
+[submodule "broadcast/Mirakurun"]
+	path = broadcast/Mirakurun
+	url = https://github.com/Chinachu/Mirakurun
+[submodule "epgstation"]
+	path = epgstation
+	url = https://github.com/l3tnun/docker-mirakurun-epgstation.git

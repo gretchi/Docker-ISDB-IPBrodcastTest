@@ -1,0 +1,16 @@
+[Unit]
+Description=tv-server
+
+[Service]
+WorkingDirectory=/home/tv-server/tv-server
+ExecStart=/usr/local/bin/docker-compose -p tv-server -f /home/tv-server/tv-server/docker-compose.yml up
+ExecStop=/usr/local/bin/docker-compose -p tv-server -f /home/tv-server/tv-server/docker-compose.yml down
+ExecReload=/usr/local/bin/docker-compose -p tv-server -f /home/tv-server/tv-server/docker-compose.yml restart
+User=tv-server
+Group=tv-server
+Restart=always
+
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
