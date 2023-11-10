@@ -1,0 +1,2 @@
+# Docker-ISDB-IPBrodcastTest
+DockerでPT3でデジタル放送をIPでLAN内に配信するテスト
